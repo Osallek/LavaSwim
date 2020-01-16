@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 public class LavaSwimListener implements Listener {
@@ -14,8 +15,25 @@ public class LavaSwimListener implements Listener {
         Player player = event.getPlayer();
         if (player.getLocation().getBlock().getType() == Material.LAVA) {
             if (player.isSprinting()) {
-                player.setGliding(true);
-                player.setVelocity(player.getLocation().getDirection().multiply(0.32)); //0.32 is limit value before gliding animation bug in a small amount of lava
+                if (player.getEyeLocation().getBlock().getType() == Material.LAVA || player.isGliding()) {
+                    player.setGliding(true);
+                    player.setVelocity(player.getLocation().getDirection().multiply(0.25)); //Slow down the player to be more realistic, this is approximately the same speed as underwater swimming
+                }
+            }
+        }
+    }
+
+    /*
+        This event is here to make sure the animation doesn't get canceled
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    void onPlayerMove(EntityToggleGlideEvent event){
+        Player player = (Player) event.getEntity();
+        if (player.getLocation().getBlock().getType() == Material.LAVA) {
+            if (player.isSprinting()) {
+                if (player.getEyeLocation().getBlock().getType() == Material.LAVA || player.isGliding()) {
+                    event.setCancelled(true);
+                }
             }
         }
     }
