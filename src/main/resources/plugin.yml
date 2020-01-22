@@ -1,0 +1,5 @@
+name: LavaSwim
+version: "1.0"
+authors: [Nyvlem, AssassinBlanc]
+main: com.osallek.LavaSwim
+api-version: "1.15"
